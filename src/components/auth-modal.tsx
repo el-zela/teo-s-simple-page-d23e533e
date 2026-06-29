@@ -54,12 +54,11 @@ export function useAuthModal() {
   return context;
 }
 
-function normalizeEmail(input: string) {
+function phoneToAuthEmail(input: string) {
   const raw = input.trim();
   if (!raw) return "";
-  if (raw.includes("@")) return raw.toLowerCase();
-  if (isValidPhone(raw)) return phoneToEmail(raw);
-  return "";
+  if (!isValidPhone(raw)) return "";
+  return phoneToEmail(raw);
 }
 
 function AuthModal({

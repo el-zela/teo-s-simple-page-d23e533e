@@ -287,16 +287,6 @@ function AuthModal({
                 />
                 {t("auth.rememberMe")}
               </label>
-              {!isSignup && (
-                <button
-                  type="button"
-                  onClick={handleForgotPassword}
-                  className="text-sm font-semibold text-primary hover:text-primary/80"
-                  disabled={loading}
-                >
-                  {t("auth.forgotPassword")}
-                </button>
-              )}
             </div>
 
             <Button type="submit" className="w-full rounded-3xl bg-primary px-4 py-3 text-base font-semibold text-primary-foreground shadow-glow" size="lg">

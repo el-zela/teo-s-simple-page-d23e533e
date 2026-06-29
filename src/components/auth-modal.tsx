@@ -93,7 +93,7 @@ function AuthModal({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const normalizedEmail = normalizeEmail(email);
+    const normalizedEmail = phoneToAuthEmail(email);
 
     if (!normalizedEmail) {
       return toast.error(t("auth.enterEmail"));
@@ -164,7 +164,7 @@ function AuthModal({
   }
 
   async function handleForgotPassword() {
-    const normalizedEmail = normalizeEmail(email);
+    const normalizedEmail = phoneToAuthEmail(email);
     if (!normalizedEmail) {
       return toast.error(t("auth.resetEmailHint"));
     }

@@ -243,11 +243,12 @@ function AuthModal({
             )}
 
             <label className="block text-sm font-medium text-foreground">
-              {t("auth.email")}
+              {t("auth.phoneLabel")}
               <input
+                type="tel"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder={t("auth.emailPh")}
+                placeholder="+255712345678"
                 className="mt-2 w-full rounded-3xl border border-white/10 bg-background/80 px-4 py-3 text-sm text-foreground outline-none transition focus:border-white/20 focus:ring-1 focus:ring-white/10"
               />
             </label>

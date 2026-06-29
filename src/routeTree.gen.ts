@@ -16,6 +16,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ChartRouteImport } from './routes/chart'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicWebhooksClickpesaRouteImport } from './routes/api/public/webhooks/clickpesa'
 import { Route as ApiPublicCronSlTpRouteImport } from './routes/api/public/cron/sl-tp'
 import { Route as ApiPublicCronSignalsRouteImport } from './routes/api/public/cron/signals'
 
@@ -54,6 +55,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksClickpesaRoute =
+  ApiPublicWebhooksClickpesaRouteImport.update({
+    id: '/api/public/webhooks/clickpesa',
+    path: '/api/public/webhooks/clickpesa',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicCronSlTpRoute = ApiPublicCronSlTpRouteImport.update({
   id: '/api/public/cron/sl-tp',
   path: '/api/public/cron/sl-tp',
@@ -75,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/wallet': typeof WalletRoute
   '/api/public/cron/signals': typeof ApiPublicCronSignalsRoute
   '/api/public/cron/sl-tp': typeof ApiPublicCronSlTpRoute
+  '/api/public/webhooks/clickpesa': typeof ApiPublicWebhooksClickpesaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,6 +94,7 @@ export interface FileRoutesByTo {
   '/wallet': typeof WalletRoute
   '/api/public/cron/signals': typeof ApiPublicCronSignalsRoute
   '/api/public/cron/sl-tp': typeof ApiPublicCronSlTpRoute
+  '/api/public/webhooks/clickpesa': typeof ApiPublicWebhooksClickpesaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,6 +107,7 @@ export interface FileRoutesById {
   '/wallet': typeof WalletRoute
   '/api/public/cron/signals': typeof ApiPublicCronSignalsRoute
   '/api/public/cron/sl-tp': typeof ApiPublicCronSlTpRoute
+  '/api/public/webhooks/clickpesa': typeof ApiPublicWebhooksClickpesaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/api/public/cron/signals'
     | '/api/public/cron/sl-tp'
+    | '/api/public/webhooks/clickpesa'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -122,6 +133,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/api/public/cron/signals'
     | '/api/public/cron/sl-tp'
+    | '/api/public/webhooks/clickpesa'
   id:
     | '__root__'
     | '/'
@@ -133,6 +145,7 @@ export interface FileRouteTypes {
     | '/wallet'
     | '/api/public/cron/signals'
     | '/api/public/cron/sl-tp'
+    | '/api/public/webhooks/clickpesa'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,6 +158,7 @@ export interface RootRouteChildren {
   WalletRoute: typeof WalletRoute
   ApiPublicCronSignalsRoute: typeof ApiPublicCronSignalsRoute
   ApiPublicCronSlTpRoute: typeof ApiPublicCronSlTpRoute
+  ApiPublicWebhooksClickpesaRoute: typeof ApiPublicWebhooksClickpesaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -198,6 +212,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/webhooks/clickpesa': {
+      id: '/api/public/webhooks/clickpesa'
+      path: '/api/public/webhooks/clickpesa'
+      fullPath: '/api/public/webhooks/clickpesa'
+      preLoaderRoute: typeof ApiPublicWebhooksClickpesaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/cron/sl-tp': {
       id: '/api/public/cron/sl-tp'
       path: '/api/public/cron/sl-tp'
@@ -225,6 +246,7 @@ const rootRouteChildren: RootRouteChildren = {
   WalletRoute: WalletRoute,
   ApiPublicCronSignalsRoute: ApiPublicCronSignalsRoute,
   ApiPublicCronSlTpRoute: ApiPublicCronSlTpRoute,
+  ApiPublicWebhooksClickpesaRoute: ApiPublicWebhooksClickpesaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

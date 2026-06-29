@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      deposits: {
+        Row: {
+          amount_tzs: number
+          amount_usd: number
+          channel: string | null
+          clickpesa_payment_id: string | null
+          created_at: string
+          credited_at: string | null
+          fx_rate: number
+          id: string
+          order_reference: string
+          payer_name: string
+          phone_number: string
+          raw_webhook: Json | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_tzs: number
+          amount_usd: number
+          channel?: string | null
+          clickpesa_payment_id?: string | null
+          created_at?: string
+          credited_at?: string | null
+          fx_rate: number
+          id?: string
+          order_reference: string
+          payer_name: string
+          phone_number: string
+          raw_webhook?: Json | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_tzs?: number
+          amount_usd?: number
+          channel?: string | null
+          clickpesa_payment_id?: string | null
+          created_at?: string
+          credited_at?: string | null
+          fx_rate?: number
+          id?: string
+          order_reference?: string
+          payer_name?: string
+          phone_number?: string
+          raw_webhook?: Json | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ledger_entries: {
         Row: {
           amount: number

@@ -14,13 +14,242 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ledger_entries: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          direction: string
+          id: string
+          memo: string | null
+          ref_id: string
+          ref_type: string
+          user_id: string
+          wallet_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          direction: string
+          id?: string
+          memo?: string | null
+          ref_id: string
+          ref_type: string
+          user_id: string
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          direction?: string
+          id?: string
+          memo?: string | null
+          ref_id?: string
+          ref_type?: string
+          user_id?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ledger_entries_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      signal_redemptions: {
+        Row: {
+          created_at: string
+          id: string
+          signal_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          signal_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          signal_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signal_redemptions_signal_id_fkey"
+            columns: ["signal_id"]
+            isOneToOne: false
+            referencedRelation: "signals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      signals: {
+        Row: {
+          action: string
+          confidence: number
+          created_at: string
+          expires_at: string | null
+          horizon_minutes: number
+          id: string
+          model: string | null
+          rationale: string
+          stop_price: number
+          symbol: string
+          target_price: number
+        }
+        Insert: {
+          action: string
+          confidence: number
+          created_at?: string
+          expires_at?: string | null
+          horizon_minutes: number
+          id?: string
+          model?: string | null
+          rationale: string
+          stop_price: number
+          symbol: string
+          target_price: number
+        }
+        Update: {
+          action?: string
+          confidence?: number
+          created_at?: string
+          expires_at?: string | null
+          horizon_minutes?: number
+          id?: string
+          model?: string | null
+          rationale?: string
+          stop_price?: number
+          symbol?: string
+          target_price?: number
+        }
+        Relationships: []
+      }
+      trades: {
+        Row: {
+          close_price: number | null
+          closed_at: string | null
+          created_at: string
+          id: string
+          idempotency_key: string | null
+          pnl_realized: number
+          price: number
+          qty: number
+          side: string
+          status: string
+          stop_loss: number | null
+          symbol: string
+          take_profit: number | null
+          user_id: string
+        }
+        Insert: {
+          close_price?: number | null
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string | null
+          pnl_realized?: number
+          price: number
+          qty: number
+          side: string
+          status?: string
+          stop_loss?: number | null
+          symbol: string
+          take_profit?: number | null
+          user_id: string
+        }
+        Update: {
+          close_price?: number | null
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string | null
+          pnl_realized?: number
+          price?: number
+          qty?: number
+          side?: string
+          status?: string
+          stop_loss?: number | null
+          symbol?: string
+          take_profit?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          balance: number
+          created_at: string
+          currency: string
+          id: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      close_trade: {
+        Args: { p_close_price: number; p_trade_id: string }
+        Returns: undefined
+      }
+      execute_trade: {
+        Args: {
+          p_idempotency_key: string
+          p_price: number
+          p_qty: number
+          p_side: string
+          p_stop_loss?: number
+          p_symbol: string
+          p_take_profit?: number
+          p_user_id: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

@@ -163,26 +163,8 @@ function AuthModal({
     }
   }
 
-  async function handleForgotPassword() {
-    const normalizedEmail = phoneToAuthEmail(email);
-    if (!normalizedEmail) {
-      return toast.error(t("auth.resetEmailHint"));
-    }
 
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: window.location.origin,
-      });
-      if (error) return toast.error(error.message);
-      toast.success(t("auth.resetSent"));
-    } catch (error) {
-      logAppError(error, { component: "AuthModal", action: "forgot-password", service: "auth" });
-      toast.error(t("auth.resetFailed"));
-    } finally {
-      setLoading(false);
-    }
-  }
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

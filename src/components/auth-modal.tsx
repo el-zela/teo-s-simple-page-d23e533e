@@ -54,12 +54,11 @@ export function useAuthModal() {
   return context;
 }
 
-function normalizeEmail(input: string) {
+function phoneToAuthEmail(input: string) {
   const raw = input.trim();
   if (!raw) return "";
-  if (raw.includes("@")) return raw.toLowerCase();
-  if (isValidPhone(raw)) return phoneToEmail(raw);
-  return "";
+  if (!isValidPhone(raw)) return "";
+  return phoneToEmail(raw);
 }
 
 function AuthModal({
@@ -94,10 +93,10 @@ function AuthModal({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const normalizedEmail = normalizeEmail(email);
+    const normalizedEmail = phoneToAuthEmail(email);
 
     if (!normalizedEmail) {
-      return toast.error(t("auth.enterEmail"));
+      return toast.error(t("auth.phoneInvalid"));
     }
 
     if (!password) {
@@ -164,26 +163,8 @@ function AuthModal({
     }
   }
 
-  async function handleForgotPassword() {
-    const normalizedEmail = normalizeEmail(email);
-    if (!normalizedEmail) {
-      return toast.error(t("auth.resetEmailHint"));
-    }
 
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-        redirectTo: window.location.origin,
-      });
-      if (error) return toast.error(error.message);
-      toast.success(t("auth.resetSent"));
-    } catch (error) {
-      logAppError(error, { component: "AuthModal", action: "forgot-password", service: "auth" });
-      toast.error(t("auth.resetFailed"));
-    } finally {
-      setLoading(false);
-    }
-  }
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -244,11 +225,12 @@ function AuthModal({
             )}
 
             <label className="block text-sm font-medium text-foreground">
-              {t("auth.email")}
+              {t("auth.phoneLabel")}
               <input
+                type="tel"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder={t("auth.emailPh")}
+                placeholder="+255712345678"
                 className="mt-2 w-full rounded-3xl border border-white/10 bg-background/80 px-4 py-3 text-sm text-foreground outline-none transition focus:border-white/20 focus:ring-1 focus:ring-white/10"
               />
             </label>
@@ -287,16 +269,6 @@ function AuthModal({
                 />
                 {t("auth.rememberMe")}
               </label>
-              {!isSignup && (
-                <button
-                  type="button"
-                  onClick={handleForgotPassword}
-                  className="text-sm font-semibold text-primary hover:text-primary/80"
-                  disabled={loading}
-                >
-                  {t("auth.forgotPassword")}
-                </button>
-              )}
             </div>
 
             <Button type="submit" className="w-full rounded-3xl bg-primary px-4 py-3 text-base font-semibold text-primary-foreground shadow-glow" size="lg">

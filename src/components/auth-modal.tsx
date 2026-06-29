@@ -96,7 +96,7 @@ function AuthModal({
     const normalizedEmail = phoneToAuthEmail(email);
 
     if (!normalizedEmail) {
-      return toast.error(t("auth.enterEmail"));
+      return toast.error(t("auth.phoneInvalid"));
     }
 
     if (!password) {

@@ -22,7 +22,7 @@ export type Database = {
           direction: string
           id: string
           memo: string | null
-          ref_id: string | null
+          ref_id: string
           ref_type: string
           user_id: string
           wallet_id: string
@@ -34,7 +34,7 @@ export type Database = {
           direction: string
           id?: string
           memo?: string | null
-          ref_id?: string | null
+          ref_id: string
           ref_type: string
           user_id: string
           wallet_id: string
@@ -46,7 +46,7 @@ export type Database = {
           direction?: string
           id?: string
           memo?: string | null
-          ref_id?: string | null
+          ref_id?: string
           ref_type?: string
           user_id?: string
           wallet_id?: string
@@ -64,18 +64,18 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          display_name: string | null
           id: string
-          user_id: string
         }
         Insert: {
           created_at?: string
-          id?: string
-          user_id: string
+          display_name?: string | null
+          id: string
         }
         Update: {
           created_at?: string
+          display_name?: string | null
           id?: string
-          user_id?: string
         }
         Relationships: []
       }
@@ -114,44 +114,45 @@ export type Database = {
           confidence: number
           created_at: string
           expires_at: string | null
-          horizon_minutes: number | null
+          horizon_minutes: number
           id: string
           model: string | null
-          rationale: string | null
-          stop_price: number | null
+          rationale: string
+          stop_price: number
           symbol: string
-          target_price: number | null
+          target_price: number
         }
         Insert: {
           action: string
           confidence: number
           created_at?: string
           expires_at?: string | null
-          horizon_minutes?: number | null
+          horizon_minutes: number
           id?: string
           model?: string | null
-          rationale?: string | null
-          stop_price?: number | null
+          rationale: string
+          stop_price: number
           symbol: string
-          target_price?: number | null
+          target_price: number
         }
         Update: {
           action?: string
           confidence?: number
           created_at?: string
           expires_at?: string | null
-          horizon_minutes?: number | null
+          horizon_minutes?: number
           id?: string
           model?: string | null
-          rationale?: string | null
-          stop_price?: number | null
+          rationale?: string
+          stop_price?: number
           symbol?: string
-          target_price?: number | null
+          target_price?: number
         }
         Relationships: []
       }
       trades: {
         Row: {
+          close_price: number | null
           closed_at: string | null
           created_at: string
           id: string
@@ -167,6 +168,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          close_price?: number | null
           closed_at?: string | null
           created_at?: string
           id?: string
@@ -182,6 +184,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          close_price?: number | null
           closed_at?: string | null
           created_at?: string
           id?: string

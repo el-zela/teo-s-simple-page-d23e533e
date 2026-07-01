@@ -119,12 +119,28 @@ export default function ForexChart({ symbol, initialTimeframe = "5m", height = 5
 
     try {
 
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const localTimeFormatter = (t: Time) => {
+      const d = new Date((t as number) * 1000);
+      return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    };
+    const localTickFormatter = (t: Time) => {
+      const d = new Date((t as number) * 1000);
+      if (tf === "1D") return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}`;
+      if (tf === "4H" || tf === "1H") return `${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    };
+
     const chart = createChart(containerRef.current, {
       height,
       layout: {
         background: { color: "transparent" },
         textColor: "rgba(220,225,240,0.85)",
         fontFamily: "Inter, system-ui, sans-serif",
+      },
+      localization: {
+        locale: typeof navigator !== "undefined" ? navigator.language : "en-US",
+        timeFormatter: localTimeFormatter,
       },
       grid: {
         vertLines: { color: "rgba(255,255,255,0.04)" },
@@ -140,6 +156,7 @@ export default function ForexChart({ symbol, initialTimeframe = "5m", height = 5
         secondsVisible: false,
         rightOffset: 8,
         barSpacing: 8,
+        tickMarkFormatter: localTickFormatter,
       },
       crosshair: {
         mode: CrosshairMode.Normal,
@@ -161,6 +178,7 @@ export default function ForexChart({ symbol, initialTimeframe = "5m", height = 5
       kineticScroll: { touch: true, mouse: false },
       autoSize: true,
     });
+
 
     const candles = chart.addSeries(CandlestickSeries, {
       upColor: "#10d29a",
@@ -229,14 +247,16 @@ export default function ForexChart({ symbol, initialTimeframe = "5m", height = 5
       const macdChart = createChart(macdRef.current, {
         height: 130,
         layout: { background: { color: "transparent" }, textColor: "rgba(220,225,240,0.7)", fontFamily: "Inter, system-ui, sans-serif" },
+        localization: { locale: typeof navigator !== "undefined" ? navigator.language : "en-US", timeFormatter: localTimeFormatter },
         grid: { vertLines: { color: "rgba(255,255,255,0.04)" }, horzLines: { color: "rgba(255,255,255,0.04)" } },
         rightPriceScale: { borderColor: "rgba(255,255,255,0.08)" },
-        timeScale: { borderColor: "rgba(255,255,255,0.08)", timeVisible: tf !== "1D" },
+        timeScale: { borderColor: "rgba(255,255,255,0.08)", timeVisible: tf !== "1D", tickMarkFormatter: localTickFormatter },
         crosshair: { mode: CrosshairMode.Normal },
         handleScroll: { mouseWheel: true, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
         handleScale: { mouseWheel: false, pinch: true, axisPressedMouseMove: false },
         autoSize: true,
       });
+
       const hist = macdChart.addSeries(HistogramSeries, { color: "rgba(120,200,255,0.5)", title: "MACD hist" });
       const line = macdChart.addSeries(LineSeries, { color: "#38bdf8", lineWidth: 2, title: "MACD" });
       const sig  = macdChart.addSeries(LineSeries, { color: "#facc15", lineWidth: 1, title: "Signal" });

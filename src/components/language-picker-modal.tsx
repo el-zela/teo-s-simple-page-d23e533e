@@ -21,37 +21,38 @@ export function LanguagePickerModal() {
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v && !hasChosenLanguage()) return; setOpen(v); }}>
-      <DialogContent className="z-[120] max-w-md p-6 sm:p-8">
-        <DialogHeader className="space-y-2 text-center sm:text-left">
-          <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-primary/15 text-primary sm:mx-0">
-            <Globe className="h-5 w-5" />
+      <DialogContent className="z-[120] max-w-xs p-4 sm:max-w-sm sm:p-5">
+        <DialogHeader className="space-y-1.5 text-center sm:text-left">
+          <div className="mx-auto grid h-8 w-8 place-items-center rounded-full bg-primary/15 text-primary sm:mx-0 sm:h-9 sm:w-9">
+            <Globe className="h-4 w-4" />
           </div>
-          <DialogTitle className="text-2xl font-semibold tracking-tight">
+          <DialogTitle className="text-base font-semibold tracking-tight sm:text-lg">
             {t("language.title")}
           </DialogTitle>
-          <DialogDescription className="text-sm text-muted-foreground">
+          <DialogDescription className="text-xs text-muted-foreground">
             {t("language.subtitle")}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div className="mt-3 grid grid-cols-2 gap-2">
           <button
             type="button"
             onClick={() => choose("en")}
-            className="rounded-2xl border border-border bg-secondary/30 px-5 py-4 text-left transition hover:border-primary/50 hover:bg-primary/10"
+            className="rounded-lg border border-border bg-secondary/30 px-2.5 py-2 text-left transition hover:border-primary/50 hover:bg-primary/10"
           >
-            <p className="text-base font-semibold">{t("language.english")}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Continue in English</p>
+            <p className="text-xs font-semibold sm:text-sm">{t("language.english")}</p>
+            <p className="mt-0.5 text-[10px] text-muted-foreground sm:text-xs">Continue in English</p>
           </button>
           <button
             type="button"
             onClick={() => choose("sw")}
-            className="rounded-2xl border border-border bg-secondary/30 px-5 py-4 text-left transition hover:border-primary/50 hover:bg-primary/10"
+            className="rounded-lg border border-border bg-secondary/30 px-2.5 py-2 text-left transition hover:border-primary/50 hover:bg-primary/10"
           >
-            <p className="text-base font-semibold">{t("language.swahili")}</p>
-            <p className="mt-1 text-xs text-muted-foreground">Endelea kwa Kiswahili</p>
+            <p className="text-xs font-semibold sm:text-sm">{t("language.swahili")}</p>
+            <p className="mt-0.5 text-[10px] text-muted-foreground sm:text-xs">Endelea kwa Kiswahili</p>
           </button>
         </div>
+
       </DialogContent>
     </Dialog>
   );

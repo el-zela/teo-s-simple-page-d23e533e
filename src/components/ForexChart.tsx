@@ -247,14 +247,16 @@ export default function ForexChart({ symbol, initialTimeframe = "5m", height = 5
       const macdChart = createChart(macdRef.current, {
         height: 130,
         layout: { background: { color: "transparent" }, textColor: "rgba(220,225,240,0.7)", fontFamily: "Inter, system-ui, sans-serif" },
+        localization: { locale: typeof navigator !== "undefined" ? navigator.language : "en-US", timeFormatter: localTimeFormatter },
         grid: { vertLines: { color: "rgba(255,255,255,0.04)" }, horzLines: { color: "rgba(255,255,255,0.04)" } },
         rightPriceScale: { borderColor: "rgba(255,255,255,0.08)" },
-        timeScale: { borderColor: "rgba(255,255,255,0.08)", timeVisible: tf !== "1D" },
+        timeScale: { borderColor: "rgba(255,255,255,0.08)", timeVisible: tf !== "1D", tickMarkFormatter: localTickFormatter },
         crosshair: { mode: CrosshairMode.Normal },
         handleScroll: { mouseWheel: true, pressedMouseMove: true, horzTouchDrag: true, vertTouchDrag: false },
         handleScale: { mouseWheel: false, pinch: true, axisPressedMouseMove: false },
         autoSize: true,
       });
+
       const hist = macdChart.addSeries(HistogramSeries, { color: "rgba(120,200,255,0.5)", title: "MACD hist" });
       const line = macdChart.addSeries(LineSeries, { color: "#38bdf8", lineWidth: 2, title: "MACD" });
       const sig  = macdChart.addSeries(LineSeries, { color: "#facc15", lineWidth: 1, title: "Signal" });

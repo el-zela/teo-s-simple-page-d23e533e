@@ -18,6 +18,7 @@ import { ChatbotWidget } from "@/components/chatbot-widget";
 import { GlobalErrorBoundary } from "@/components/global-error-boundary";
 import { AuthModalProvider } from "@/components/auth-modal";
 import { LanguagePickerModal } from "@/components/language-picker-modal";
+import { SplashScreen } from "@/components/splash-screen";
 import i18n, { getStoredLanguage } from "@/i18n";
 import { setupGlobalErrorLogging } from "@/lib/error-logger";
 

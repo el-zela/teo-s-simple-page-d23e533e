@@ -1,17 +1,28 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 
-const SPLASH_MS = 2500;
+const MIN_SPLASH_MS = 2500;
 
 export function SplashScreen() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isLoading = useRouterState({ select: (s) => s.isLoading || s.isTransitioning });
   const [visible, setVisible] = useState(true);
+  const startRef = useRef<number>(Date.now());
 
+  // Reset timer on every route change
   useEffect(() => {
+    startRef.current = Date.now();
     setVisible(true);
-    const id = window.setTimeout(() => setVisible(false), SPLASH_MS);
-    return () => window.clearTimeout(id);
   }, [pathname]);
+
+  // Hide only after route finished loading AND minimum duration elapsed
+  useEffect(() => {
+    if (isLoading) return;
+    const elapsed = Date.now() - startRef.current;
+    const remaining = Math.max(0, MIN_SPLASH_MS - elapsed);
+    const id = window.setTimeout(() => setVisible(false), remaining);
+    return () => window.clearTimeout(id);
+  }, [isLoading, pathname]);
 
   return (
     <div

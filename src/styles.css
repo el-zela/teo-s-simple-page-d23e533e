@@ -391,4 +391,39 @@
   .tv-lightweight-charts #tv-attr-logo {
     display: none !important;
   }
+
+  /* Global smooth transitions for interactive elements */
+  button,
+  a,
+  [role="button"],
+  [role="menuitem"],
+  [role="option"],
+  [role="tab"],
+  input,
+  textarea,
+  select,
+  summary,
+  .card,
+  [data-slot="card"] {
+    transition:
+      background-color 200ms ease,
+      color 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease,
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+
+  /* Radix popovers/dropdowns/dialogs animate open/close */
+  [data-state="open"][data-radix-popper-content-wrapper] > *,
+  [data-radix-menu-content],
+  [data-radix-popover-content],
+  [data-radix-dropdown-menu-content],
+  [data-radix-select-content],
+  [data-radix-tooltip-content],
+  [data-radix-hover-card-content] {
+    animation-duration: 200ms;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }
+

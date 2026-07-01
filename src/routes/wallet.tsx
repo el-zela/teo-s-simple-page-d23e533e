@@ -7,7 +7,7 @@ import { AuthGate } from "@/components/auth-gate";
 import { useServerFn } from "@tanstack/react-start";
 import { withdrawFunds } from "@/lib/wallet.functions";
 import { initiateDeposit, checkDepositStatus } from "@/lib/clickpesa.functions";
-import { detectChannel, normalizeTzPhone, tzsToUsd, USD_TZS_RATE, MIN_DEPOSIT_TZS } from "@/lib/clickpesa";
+import { detectChannel, normalizeTzPhone, tzsToUsd, MIN_DEPOSIT_TZS } from "@/lib/clickpesa";
 import { toast } from "sonner";
 import { logAppError } from "@/lib/error-logger";
 import { useTranslation } from "react-i18next";
@@ -101,7 +101,7 @@ function WalletPage() {
         if (res.ok) {
           setPendingStatus(res.status);
           if (res.credited_at || res.status === "SUCCESS") {
-            toast.success(`Umepokea $${Number(res.amount_usd).toFixed(2)} kwenye wallet yako`);
+            toast.success(t("wallet.creditedToast", { amt: Number(res.amount_usd).toFixed(2) }));
             setPendingRef(null);
             setPendingStatus("");
             setModal(null);
@@ -109,7 +109,7 @@ function WalletPage() {
             return;
           }
           if (["FAILED", "CANCELLED", "REJECTED", "EXPIRED"].includes(res.status?.toUpperCase?.() ?? "")) {
-            toast.error(`Malipo hayakukamilika: ${res.status}`);
+            toast.error(t("wallet.paymentFailed", { status: res.status }));
             setPendingRef(null);
             setPendingStatus("");
             await refreshAll();
@@ -128,34 +128,34 @@ function WalletPage() {
   const normalizedPhonePreview = normalizeTzPhone(phone);
   const detectedChannel = normalizedPhonePreview ? detectChannel(normalizedPhonePreview) : null;
   const tzsNum = parseInt(tzsAmount || "0", 10) || 0;
-  const usdPreview = tzsNum > 0 ? tzsToUsd(tzsNum) : 0;
+  const usdPreview = tzsNum > 0 ? tzsToUsd(tzsNum) : tzsToUsd(MIN_DEPOSIT_TZS);
 
   async function submitDeposit() {
     if (busy) return;
     const tzs = parseInt(tzsAmount || "0", 10);
-    if (!payerName.trim() || payerName.trim().length < 2) return toast.error("Andika jina lako kamili");
-    if (!normalizedPhonePreview) return toast.error("Namba ya simu si sahihi (mfano: 0712345678)");
-    if (detectedChannel === "UNKNOWN") return toast.error("Mtandao hautambuliki");
+    if (!payerName.trim() || payerName.trim().length < 2) return toast.error(t("wallet.invalidName"));
+    if (!normalizedPhonePreview) return toast.error(t("wallet.invalidPhone"));
+    if (detectedChannel === "UNKNOWN") return toast.error(t("wallet.unknownNetwork"));
     if (!tzs || tzs < MIN_DEPOSIT_TZS) {
-      return toast.error(`Kiwango cha chini ni TZS ${MIN_DEPOSIT_TZS.toLocaleString()}`);
+      return toast.error(t("wallet.minAmount", { amt: MIN_DEPOSIT_TZS.toLocaleString() }));
     }
     setBusy(true);
     try {
       const res = await runDeposit({ data: { payer_name: payerName.trim(), phone_number: phone, amount_tzs: tzs } });
       if (!res.ok) {
         const map: Record<string, string> = {
-          invalid_phone: "Namba ya simu si sahihi",
-          unsupported_network: "Mtandao hautambuliki",
-          [`min_amount_${MIN_DEPOSIT_TZS}`]: `Kiwango cha chini ni TZS ${MIN_DEPOSIT_TZS.toLocaleString()}`,
+          invalid_phone: t("wallet.invalidPhone"),
+          unsupported_network: t("wallet.unknownNetwork"),
+          [`min_amount_${MIN_DEPOSIT_TZS}`]: t("wallet.minAmount", { amt: MIN_DEPOSIT_TZS.toLocaleString() }),
         };
         toast.error(map[res.error] ?? res.error);
       } else {
-        toast.success(`Tumetuma ombi (${res.channel}). Angalia simu yako kwa pop-up ya malipo.`);
+        toast.success(t("wallet.requestSent", { channel: res.channel }));
         setPendingRef(res.order_reference);
         setPendingStatus("PROCESSING");
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Imeshindikana");
+      toast.error(e instanceof Error ? e.message : t("common.failed"));
     } finally {
       setBusy(false);
     }
@@ -228,11 +228,10 @@ function WalletPage() {
 
       {/* Main balance card */}
       <div className="card-premium mt-5 p-6">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">Main Balance</p>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground">{t("wallet.mainBalance")}</p>
         <p className="mt-3 font-mono text-4xl font-bold tracking-tight text-shimmer">
           ${mainBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })}
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">USD · 1 USD = {USD_TZS_RATE.toLocaleString()} TZS</p>
       </div>
 
       {dataLoading && <div className="mt-4 card-premium h-20 animate-pulse" />}
@@ -243,50 +242,50 @@ function WalletPage() {
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4" onClick={closeModal}>
           <div className="w-full max-w-sm rounded-3xl border border-border bg-background p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Deposit (ClickPesa)</h3>
+              <h3 className="text-lg font-semibold">{t("wallet.depositTitle")}</h3>
               <button onClick={closeModal} className="rounded-full p-1 hover:bg-secondary/40"><X className="h-4 w-4" /></button>
             </div>
 
             {pendingRef ? (
               <div className="mt-6 text-center">
                 <Loader2 className="mx-auto h-8 w-8 animate-spin text-[color:var(--success)]" />
-                <p className="mt-4 text-sm font-medium">Angalia simu yako kwa pop-up ya malipo</p>
-                <p className="mt-1 text-xs text-muted-foreground">Status: {pendingStatus || "PROCESSING"}</p>
-                <p className="mt-3 text-[11px] text-muted-foreground">Ref: {pendingRef}</p>
+                <p className="mt-4 text-sm font-medium">{t("wallet.checkPhone")}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{t("wallet.status")}: {pendingStatus || "PROCESSING"}</p>
+                <p className="mt-3 text-[11px] text-muted-foreground">{t("wallet.ref")}: {pendingRef}</p>
                 <button
                   onClick={() => { setPendingRef(null); setPendingStatus(""); }}
                   className="mt-5 w-full rounded-2xl border border-border py-2.5 text-xs font-semibold text-muted-foreground"
                 >
-                  Funga
+                  {t("common.close")}
                 </button>
               </div>
             ) : (
               <>
-                <label className="mt-4 block text-xs text-muted-foreground">Jina kamili</label>
+                <label className="mt-4 block text-xs text-muted-foreground">{t("wallet.fullName")}</label>
                 <input
                   value={payerName}
                   onChange={(e) => setPayerName(e.target.value)}
-                  placeholder="John Doe"
+                  placeholder={t("wallet.fullNamePh")}
                   className="mt-1 w-full rounded-2xl border border-border bg-input/40 px-3 py-2 text-sm"
                 />
 
-                <label className="mt-3 block text-xs text-muted-foreground">Namba ya simu (TZ)</label>
+                <label className="mt-3 block text-xs text-muted-foreground">{t("wallet.phoneLabel")}</label>
                 <input
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="0712345678"
+                  placeholder={t("wallet.phonePh")}
                   className="mt-1 w-full rounded-2xl border border-border bg-input/40 px-3 py-2 text-sm"
                 />
                 {phone && (
                   <p className="mt-1 text-[11px] text-muted-foreground">
                     {detectedChannel && detectedChannel !== "UNKNOWN"
-                      ? `Mtandao: ${detectedChannel}`
-                      : "Namba si sahihi"}
+                      ? `${t("wallet.networkLabel")}: ${detectedChannel}`
+                      : t("wallet.phoneInvalid")}
                   </p>
                 )}
 
-                <label className="mt-3 block text-xs text-muted-foreground">Kiasi (TZS)</label>
+                <label className="mt-3 block text-xs text-muted-foreground">{t("wallet.amountTzs")}</label>
                 <input
                   type="number"
                   inputMode="numeric"
@@ -298,7 +297,7 @@ function WalletPage() {
                   className="mt-1 w-full rounded-2xl border border-border bg-input/40 px-3 py-2 text-sm"
                 />
                 <p className="mt-1 text-[11px] text-muted-foreground">
-                  Min: TZS {MIN_DEPOSIT_TZS.toLocaleString()} · Utapokea: ${usdPreview.toFixed(2)}
+                  {t("wallet.minTzs", { amt: MIN_DEPOSIT_TZS.toLocaleString() })} · {t("wallet.willReceive", { amt: usdPreview.toFixed(2) })}
                 </p>
 
                 <button
@@ -306,7 +305,7 @@ function WalletPage() {
                   onClick={submitDeposit}
                   className="mt-5 w-full rounded-2xl bg-[color:var(--success)] py-2.5 text-sm font-bold text-black disabled:opacity-50"
                 >
-                  {busy ? "Inatuma..." : "Deposit"}
+                  {busy ? t("wallet.sending") : t("wallet.deposit")}
                 </button>
               </>
             )}
@@ -343,10 +342,10 @@ function WalletPage() {
 
       {/* Recent deposits */}
       <section className="mt-6">
-        <h2 className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">Deposits za karibuni</h2>
+        <h2 className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">{t("wallet.recentDeposits")}</h2>
         <div className="mt-2 space-y-2">
           {deposits.length === 0 ? (
-            <div className="card-premium p-4 text-sm text-muted-foreground">Hakuna deposit bado.</div>
+            <div className="card-premium p-4 text-sm text-muted-foreground">{t("wallet.noDeposits")}</div>
           ) : deposits.map((d) => (
             <div key={d.id} className="card-premium flex items-center justify-between gap-2 p-3 text-sm">
               <div className="min-w-0">

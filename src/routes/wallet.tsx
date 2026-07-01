@@ -7,7 +7,7 @@ import { AuthGate } from "@/components/auth-gate";
 import { useServerFn } from "@tanstack/react-start";
 import { withdrawFunds } from "@/lib/wallet.functions";
 import { initiateDeposit, checkDepositStatus } from "@/lib/clickpesa.functions";
-import { detectChannel, normalizeTzPhone, tzsToUsd, USD_TZS_RATE, MIN_DEPOSIT_TZS } from "@/lib/clickpesa";
+import { detectChannel, normalizeTzPhone, tzsToUsd, MIN_DEPOSIT_TZS } from "@/lib/clickpesa";
 import { toast } from "sonner";
 import { logAppError } from "@/lib/error-logger";
 import { useTranslation } from "react-i18next";

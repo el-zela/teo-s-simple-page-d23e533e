@@ -128,34 +128,34 @@ function WalletPage() {
   const normalizedPhonePreview = normalizeTzPhone(phone);
   const detectedChannel = normalizedPhonePreview ? detectChannel(normalizedPhonePreview) : null;
   const tzsNum = parseInt(tzsAmount || "0", 10) || 0;
-  const usdPreview = tzsNum > 0 ? tzsToUsd(tzsNum) : 0;
+  const usdPreview = tzsNum > 0 ? tzsToUsd(tzsNum) : tzsToUsd(MIN_DEPOSIT_TZS);
 
   async function submitDeposit() {
     if (busy) return;
     const tzs = parseInt(tzsAmount || "0", 10);
-    if (!payerName.trim() || payerName.trim().length < 2) return toast.error("Andika jina lako kamili");
-    if (!normalizedPhonePreview) return toast.error("Namba ya simu si sahihi (mfano: 0712345678)");
-    if (detectedChannel === "UNKNOWN") return toast.error("Mtandao hautambuliki");
+    if (!payerName.trim() || payerName.trim().length < 2) return toast.error(t("wallet.invalidName"));
+    if (!normalizedPhonePreview) return toast.error(t("wallet.invalidPhone"));
+    if (detectedChannel === "UNKNOWN") return toast.error(t("wallet.unknownNetwork"));
     if (!tzs || tzs < MIN_DEPOSIT_TZS) {
-      return toast.error(`Kiwango cha chini ni TZS ${MIN_DEPOSIT_TZS.toLocaleString()}`);
+      return toast.error(t("wallet.minAmount", { amt: MIN_DEPOSIT_TZS.toLocaleString() }));
     }
     setBusy(true);
     try {
       const res = await runDeposit({ data: { payer_name: payerName.trim(), phone_number: phone, amount_tzs: tzs } });
       if (!res.ok) {
         const map: Record<string, string> = {
-          invalid_phone: "Namba ya simu si sahihi",
-          unsupported_network: "Mtandao hautambuliki",
-          [`min_amount_${MIN_DEPOSIT_TZS}`]: `Kiwango cha chini ni TZS ${MIN_DEPOSIT_TZS.toLocaleString()}`,
+          invalid_phone: t("wallet.invalidPhone"),
+          unsupported_network: t("wallet.unknownNetwork"),
+          [`min_amount_${MIN_DEPOSIT_TZS}`]: t("wallet.minAmount", { amt: MIN_DEPOSIT_TZS.toLocaleString() }),
         };
         toast.error(map[res.error] ?? res.error);
       } else {
-        toast.success(`Tumetuma ombi (${res.channel}). Angalia simu yako kwa pop-up ya malipo.`);
+        toast.success(t("wallet.requestSent", { channel: res.channel }));
         setPendingRef(res.order_reference);
         setPendingStatus("PROCESSING");
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Imeshindikana");
+      toast.error(e instanceof Error ? e.message : t("common.failed"));
     } finally {
       setBusy(false);
     }

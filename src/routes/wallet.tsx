@@ -101,7 +101,7 @@ function WalletPage() {
         if (res.ok) {
           setPendingStatus(res.status);
           if (res.credited_at || res.status === "SUCCESS") {
-            toast.success(`Umepokea $${Number(res.amount_usd).toFixed(2)} kwenye wallet yako`);
+            toast.success(t("wallet.creditedToast", { amt: Number(res.amount_usd).toFixed(2) }));
             setPendingRef(null);
             setPendingStatus("");
             setModal(null);
@@ -109,7 +109,7 @@ function WalletPage() {
             return;
           }
           if (["FAILED", "CANCELLED", "REJECTED", "EXPIRED"].includes(res.status?.toUpperCase?.() ?? "")) {
-            toast.error(`Malipo hayakukamilika: ${res.status}`);
+            toast.error(t("wallet.paymentFailed", { status: res.status }));
             setPendingRef(null);
             setPendingStatus("");
             await refreshAll();

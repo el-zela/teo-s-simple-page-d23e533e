@@ -196,9 +196,20 @@ function RootComponent() {
             </PageFade>
           </GlobalErrorBoundary>
         </div>
-        <GlobalErrorBoundary name="BottomNav" resetKey={location}><BottomNav /></GlobalErrorBoundary>
-        <GlobalErrorBoundary name="ChatbotWidget"><ChatbotWidget /></GlobalErrorBoundary>
-        <LanguagePickerModal />
+        <div className="min-h-screen pb-20">
+          <GlobalErrorBoundary name="AppShell" resetKey={location}>
+            <PageFade>
+              <ClientOnly>
+                <Outlet />
+              </ClientOnly>
+            </PageFade>
+          </GlobalErrorBoundary>
+        </div>
+        <ClientOnly>
+          <GlobalErrorBoundary name="BottomNav" resetKey={location}><BottomNav /></GlobalErrorBoundary>
+          <GlobalErrorBoundary name="ChatbotWidget"><ChatbotWidget /></GlobalErrorBoundary>
+          <LanguagePickerModal />
+        </ClientOnly>
         <SplashScreen />
         <Toaster theme="dark" position="top-right" richColors />
       </AuthModalProvider>

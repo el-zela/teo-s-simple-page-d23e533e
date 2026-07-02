@@ -192,13 +192,6 @@ function RootComponent() {
         <div className="min-h-screen pb-20">
           <GlobalErrorBoundary name="AppShell" resetKey={location}>
             <PageFade>
-              <Outlet />
-            </PageFade>
-          </GlobalErrorBoundary>
-        </div>
-        <div className="min-h-screen pb-20">
-          <GlobalErrorBoundary name="AppShell" resetKey={location}>
-            <PageFade>
               <ClientOnly>
                 <Outlet />
               </ClientOnly>
